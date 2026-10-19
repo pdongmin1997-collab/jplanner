@@ -175,7 +175,7 @@ h4.sec{margin:26px 0 10px;font-size:10px;letter-spacing:.4em;text-transform:uppe
   </div>
   <main id="pgS" class="page"></main>
   <main id="pgO" class="page" hidden>
-    <div id="mapwrap"><div id="map"></div><button id="locBtn" type="button" onclick="toggleLoc()" aria-label="내 위치">◎ 내 위치</button><div id="locStat" hidden></div><div id="mapmsg" hidden>지도를 불러오지 못했어요.<br>인터넷에 연결한 뒤 다시 열어주세요.</div></div>
+    <div id="mapwrap"><div id="map"></div><button id="locBtn" type="button" onclick="toggleLoc()" aria-label="내 위치">◎ 내 위치 v22</button><div id="locStat" hidden></div><div id="mapmsg" hidden>지도를 불러오지 못했어요.<br>인터넷에 연결한 뒤 다시 열어주세요.</div></div>
     <div id="panel" class="card">
       <div id="pinfo"></div>
       <div class="prog"><div class="bar"><i id="progBar"></i></div><span id="progTxt"></span></div>
@@ -562,7 +562,7 @@ function stopLoc(){
   locWatch=null;locFirst=true;
   if(meMarker&&map){map.removeLayer(meMarker);meMarker=null}
   if(meCircle&&map){map.removeLayer(meCircle);meCircle=null}
-  var b=document.getElementById('locBtn');if(b){b.classList.remove('on');b.textContent='◎ 내 위치'}
+  var b=document.getElementById('locBtn');if(b){b.classList.remove('on');b.textContent='◎ 내 위치 v22'}
 }
 function onLocOk(p){
   var ll=[p.coords.latitude,p.coords.longitude],acc=p.coords.accuracy||0;
