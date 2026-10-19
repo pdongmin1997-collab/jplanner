@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>J플래너</title>
-<meta name="theme-color" content="#1b4b7a">
+<meta name="theme-color" content="#0e1d17">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -12,140 +12,154 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="J플래너">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,600&family=Noto+Serif+KR:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-:root{--navy:#1b4b7a;--blue:#3f7cb0;--orange:#d9724a;--gold:#e0a94e;--bg:#f6f8fa;--card:#fff;--line:#e5e9ee;--text:#1c2733;--sub:#6b7a89;--abh:56px;--nbh:110px;--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px)}
+:root{--navy:#c9a96a;--blue:#c9a96a;--orange:#a8323f;--gold:#c9a96a;--bg:#0e1d17;--card:rgba(255,255,255,.035);--line:rgba(201,169,106,.22);--text:#f2eadb;--sub:#a3b0a6;--abh:58px;--nbh:100px;--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--serif:"Cormorant Garamond","Noto Serif KR","Playfair Display",Georgia,serif;--wine:#6e1a28}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
-html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;font-size:15px;line-height:1.45}
+html,body{margin:0;background:radial-gradient(800px 420px at 50% -8%,rgba(110,26,40,.5),transparent 65%),var(--bg);background-attachment:fixed;color:var(--text);font-family:"Noto Sans KR","Apple SD Gothic Neo",sans-serif;font-size:15px;line-height:1.55;font-weight:300}
 body.lock{overflow:hidden;position:fixed;width:100%;left:0;right:0}
-button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;transition:transform .12s}
-button:active{transform:scale(.95)}
-input,textarea,select{font:inherit;font-size:16px;color:var(--text)}
-#app{max-width:560px;margin:0 auto;min-height:100vh;padding-bottom:calc(90px + var(--sab))}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;transition:opacity .2s,transform .12s}
+button:active{opacity:.6;transform:scale(.98)}
+input,textarea,select{font:inherit;font-size:16px;color:var(--text);color-scheme:dark}
+#app{max-width:560px;margin:0 auto;min-height:100vh;padding-bottom:calc(96px + var(--sab))}
 
-/* appbar */
-#appbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:8px;padding:calc(8px + var(--sat)) 12px 8px;background:var(--navy);color:#fff;max-width:560px;margin:0 auto}
-.logo{font-weight:800;font-size:16px;white-space:nowrap}
-.apbtn{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.16);font-size:12px;white-space:nowrap}
-.tripname{flex:1;min-width:0;text-align:right;font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:6px 4px}
-.plus{width:34px;height:34px;border-radius:50%;background:var(--orange);font-size:22px;line-height:1;color:#fff;flex:none}
+#appbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:10px;max-width:560px;margin:0 auto;padding:calc(10px + var(--sat)) 18px 10px;background:rgba(14,29,23,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.logo{font-family:var(--serif);font-weight:600;font-size:20px;letter-spacing:.14em;color:var(--gold);white-space:nowrap}
+.logo svg{width:11px;height:11px;margin-right:8px;vertical-align:1px;fill:var(--gold)}
+.apbtn{font-size:11px;letter-spacing:.12em;color:var(--sub);white-space:nowrap;padding:4px 6px}
+.tripname{flex:1;min-width:0;text-align:right;font-family:var(--serif);font-size:16px;font-weight:600;font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+.plus{width:30px;height:30px;border:1px solid var(--gold);border-radius:50%;font-size:18px;line-height:1;color:var(--gold);flex:none}
 
-/* hero */
-#hero{position:relative;color:#fff;padding:26px 18px 22px;min-height:190px;background:linear-gradient(135deg,#1b4b7a,#3f7cb0);background-size:cover;background-position:center;display:flex;flex-direction:column;justify-content:flex-end}
-#heroLabel{font-size:12px;letter-spacing:.08em;opacity:.9}
-#heroTitle{margin:4px 0 4px;font-size:27px;font-weight:800;line-height:1.2;text-shadow:0 2px 8px rgba(0,0,0,.35)}
-#heroSub{font-size:13px;opacity:.95}
-#dday{display:inline-block;margin-top:10px;align-self:flex-start;background:var(--gold);color:#3a2a08;font-weight:800;font-size:13px;padding:4px 12px;border-radius:999px}
-#camBtn{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.35);font-size:18px}
+#hero{position:relative;color:var(--text);margin:14px 14px 0;padding:112px 22px 34px;min-height:340px;border:1px solid var(--gold);background:linear-gradient(180deg,rgba(110,26,40,.55),rgba(14,29,23,.2) 70%),linear-gradient(135deg,#3a1019,#12281f);background-size:cover;background-position:center;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;text-align:center}
+#hero::before{content:"";position:absolute;inset:7px;border:1px solid rgba(201,169,106,.4);pointer-events:none}
+#hero::after{content:"";position:absolute;top:26px;left:50%;width:50px;height:70px;margin-left:-25px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 80' fill='none' stroke='%23c9a96a' stroke-width='1.1' stroke-linecap='round'%3E%3Cpath d='M30 3l2.2 4.6 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5-3.6-3.5 5-.7z'/%3E%3Cpath d='M30 18v56M30 26L19 40M30 26l11 14M30 40L14 58M30 40l16 18M30 56L9 76M30 56l21 20'/%3E%3C/svg%3E") center/contain no-repeat;opacity:.9}
+#heroLabel{font-size:10px;letter-spacing:.42em;text-transform:uppercase;color:var(--gold)}
+#heroTitle{margin:10px 0 6px;font-family:var(--serif);font-size:40px;font-weight:600;line-height:1.1;letter-spacing:.01em;text-shadow:0 2px 18px rgba(0,0,0,.5)}
+#heroSub{font-size:12px;letter-spacing:.08em;color:#d9cfbb}
+#dday{margin-top:16px;padding:4px 18px;border:1px solid var(--gold);color:var(--gold);font-family:var(--serif);font-size:15px;font-weight:600;letter-spacing:.2em}
+#camBtn{position:absolute;top:18px;right:18px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:var(--gold);background:rgba(10,22,17,.35);border:1px solid rgba(201,169,106,.5);border-radius:50%;z-index:2;opacity:.85}
 
-/* nav */
-#nav{position:sticky;top:var(--abh);z-index:40;background:rgba(246,248,250,.97);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);max-width:560px;margin:0 auto}
-#pagetabs{display:flex;gap:6px;padding:10px 12px 4px}
-.ptab{flex:1;padding:8px;border-radius:10px;background:#e9eef3;font-weight:700;color:var(--sub)}
-.ptab.on{background:var(--navy);color:#fff}
-#daytabs{display:flex;gap:8px;overflow-x:auto;padding:8px 12px 10px;scrollbar-width:none}
+#nav{position:sticky;top:var(--abh);z-index:40;background:rgba(14,29,23,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);max-width:560px;margin:0 auto}
+#pagetabs{display:flex;justify-content:center;gap:34px;padding:12px 12px 0}
+.ptab{padding:4px 2px 8px;font-size:12px;letter-spacing:.3em;color:var(--sub);border-bottom:1px solid transparent}
+.ptab.on{color:var(--gold);border-bottom-color:var(--gold)}
+#daytabs{display:flex;gap:4px;overflow-x:auto;padding:6px 14px 10px;scrollbar-width:none}
 #daytabs::-webkit-scrollbar{display:none}
-.chip{flex:none;min-width:64px;padding:6px 8px;border-radius:12px;background:#fff;border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:0;line-height:1.25}
-.chip small{color:var(--sub);font-size:11px}.chip b{font-size:14px}.chip em{font-style:normal;font-size:10px;color:var(--sub);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}.chip.on small,.chip.on em{color:#cfe0ef}
+.chip{flex:none;min-width:54px;padding:6px 8px;display:flex;flex-direction:column;align-items:center;line-height:1.2;border-bottom:1px solid transparent}
+.chip small{color:var(--sub);font-size:10px;letter-spacing:.14em}.chip b{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--sub)}.chip em{display:none}
+.chip.on b{color:var(--gold)}.chip.on small{color:var(--text)}.chip.on{border-bottom-color:var(--gold)}
 
-.page{padding:12px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 2px 10px rgba(20,40,70,.05)}
-h4.sec{margin:16px 2px 8px;font-size:14px;color:var(--sub)}
+.page{padding:8px 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:2px}
+h4.sec{margin:26px 0 10px;font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);font-weight:500}
 
-/* flights */
-.flight{padding:12px 14px;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.flight{padding:16px;display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .fcol{flex:1}.fcol.r{text-align:right}
-.fcol .code{font-size:22px;font-weight:800;color:var(--navy)}.fcol .city{font-size:12px;color:var(--sub)}.fcol .ftime{font-weight:700}
-.fmid{flex:none;text-align:center;color:var(--blue);font-size:11px;min-width:70px}.fmid span{display:block;font-size:20px}
-.fedit{flex:none;font-size:13px;color:var(--sub);padding:4px}
-.addline{width:100%;padding:11px;border:1.5px dashed #c7d2dc;border-radius:12px;color:var(--blue);font-weight:700;background:none}
+.fcol .code{font-family:var(--serif);font-size:30px;font-weight:600;letter-spacing:.08em;color:var(--gold)}.fcol .city{font-size:11px;color:var(--sub);letter-spacing:.06em}.fcol .ftime{font-weight:400}
+.fmid{flex:none;text-align:center;color:var(--gold);font-size:10px;min-width:70px;letter-spacing:.1em}.fmid span{display:block;font-size:16px;filter:grayscale(1) sepia(1) saturate(2) brightness(1.2)}
+.fedit{flex:none;font-size:12px;color:var(--sub);padding:4px}
+.addline{width:100%;padding:12px;border:1px solid var(--line);border-radius:2px;color:var(--gold);font-size:12px;letter-spacing:.14em}
 
-/* docs */
-.docrow{display:flex;align-items:center;gap:10px;padding:10px 12px;width:100%;text-align:left;border-bottom:1px solid var(--line)}
-.docrow:last-child{border:0}.docrow .di{font-size:20px}.docrow b{display:block;font-size:14px;word-break:break-all}.docrow small{color:var(--sub)}
+.docrow{display:flex;align-items:center;gap:10px;padding:12px 14px;width:100%;text-align:left;border-bottom:1px solid var(--line)}
+.docrow:last-child{border:0}.docrow .di{font-size:18px;filter:grayscale(1) sepia(1) brightness(1.3)}.docrow b{display:block;font-size:14px;font-weight:400;word-break:break-all}.docrow small{color:var(--sub)}
 
-/* day section + cards */
 .daysec{scroll-margin-top:calc(var(--abh) + var(--nbh) + 6px)}
-.dayhead{display:flex;align-items:baseline;gap:8px;margin:18px 2px 8px}.dayhead b{font-size:17px;color:var(--navy)}.dayhead span{color:var(--sub);font-size:13px}
-.empty{padding:18px;text-align:center;color:var(--sub);background:#fff;border:1px dashed var(--line);border-radius:14px}
-.icard{padding:12px;margin-bottom:10px;display:flex;gap:12px}
+.dayhead{display:flex;align-items:baseline;gap:12px;margin:34px 0 6px}
+.dayhead b{font-family:var(--serif);font-size:32px;font-style:italic;font-weight:600;color:var(--text);line-height:1}
+.dayhead span{color:var(--gold);font-size:11px;letter-spacing:.2em}
+.dayhead::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent);order:3}
+.empty{padding:22px;text-align:center;color:var(--sub);border:1px solid var(--line);font-size:13px}
+.icard{padding:18px 0;display:flex;gap:14px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:none;box-shadow:none;backdrop-filter:none}
 .icard.flash{animation:flash 1.6s}
-@keyframes flash{0%,60%{box-shadow:0 0 0 3px var(--gold)}100%{box-shadow:0 2px 10px rgba(20,40,70,.05)}}
-.ico{flex:none;width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px}
+@keyframes flash{0%,60%{background:rgba(201,169,106,.14)}100%{background:none}}
+.ico{flex:none;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:none!important;border:1px solid var(--gold);filter:grayscale(1) sepia(1) saturate(1.6) brightness(1.25)}
 .ibody{flex:1;min-width:0}
-.ititle{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.ititle .tm{font-weight:800;color:var(--navy)}.ititle .nm{font-weight:700}
-.alarmb{font-size:11px;background:#fff3e6;color:var(--orange);padding:1px 7px;border-radius:999px}
-.meta{display:flex;gap:6px;align-items:center;margin-top:2px;font-size:12px;color:var(--sub)}
-.mvb{background:#eaf2f9;color:var(--blue);padding:1px 8px;border-radius:999px;font-size:11px}
-.memo{margin-top:6px;font-size:13px;white-space:pre-wrap;word-break:break-word}
-.btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
-.btns a,.btns button{padding:5px 10px;border-radius:999px;background:#eef2f6;font-size:12px;font-weight:600;color:var(--navy);text-decoration:none}
-.btns .dg{color:#b3402a;background:#fdeeea}
+.ititle{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}.ititle .tm{font-family:var(--serif);font-weight:600;font-size:17px;color:var(--gold);font-variant-numeric:lining-nums}.ititle .nm{font-family:var(--serif);font-weight:600;font-size:19px}
+.alarmb{font-size:10px;letter-spacing:.1em;color:var(--gold);border:1px solid var(--line);padding:0 7px}
+.meta{display:flex;gap:8px;align-items:center;margin-top:2px;font-size:11px;letter-spacing:.06em;color:var(--sub)}.meta span{color:var(--sub)!important;font-weight:400!important}
+.mvb{border:1px solid var(--line);color:var(--gold)!important;padding:0 8px;font-size:10px}
+.memo{margin-top:6px;font-size:13px;color:#cfc6b4;white-space:pre-wrap;word-break:break-word}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.btns a,.btns button{padding:4px 12px;border:1px solid var(--line);border-radius:2px;font-size:11px;letter-spacing:.08em;color:var(--gold);text-decoration:none}
+.btns .dg{color:#c98a8a}
 
-/* bottom bar */
-#bottombar{position:fixed;left:0;right:0;bottom:0;z-index:45;display:flex;gap:8px;max-width:560px;margin:0 auto;padding:10px 12px calc(10px + var(--sab));background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line)}
-.bb{flex:1;padding:13px;border-radius:14px;font-weight:800}.bb.p{background:var(--navy);color:#fff;flex:2}.bb.s{background:#eef2f6;color:var(--navy)}
+#bottombar{position:fixed;left:0;right:0;bottom:0;z-index:45;display:flex;gap:10px;max-width:560px;margin:0 auto;padding:12px 18px calc(12px + var(--sab));background:rgba(10,22,17,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+.bb{flex:1;padding:13px;border-radius:2px;font-size:12px;letter-spacing:.2em;font-weight:500}
+.bb.p{background:var(--gold);color:#1a1208;flex:2}.bb.s{border:1px solid var(--gold);color:var(--gold)}
 
-/* overview */
 #mapwrap{position:relative}
-#map{height:54vh;min-height:300px;border-radius:16px;border:1px solid var(--line);overflow:hidden;z-index:1}
-#mapmsg{padding:30px 16px;text-align:center;color:var(--sub);background:#fff;border-radius:16px;border:1px dashed var(--line)}
-#panel{margin-top:10px;padding:12px 14px}
-#pinfo{min-height:44px}#pinfo b{font-size:16px}#pinfo div{font-size:12px;color:var(--sub);margin-top:2px}
-.prog{display:flex;align-items:center;gap:10px;margin:10px 0}.prog .bar{flex:1;height:8px;border-radius:99px;background:#e9eef3;overflow:hidden}.prog .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--orange));width:0;transition:width .4s}.prog span{font-size:12px;color:var(--sub);font-weight:700;white-space:nowrap}
-.ctrl{display:flex;gap:8px}.ctrl button{flex:1;padding:11px;border-radius:12px;background:#eef2f6;font-weight:800;color:var(--navy)}.ctrl button.go{background:var(--orange);color:#fff}
-.ctrl button:disabled{opacity:.5}
+#map{height:56vh;min-height:300px;border:1px solid var(--gold);overflow:hidden;z-index:1;background:#e8eaed}
+#map .leaflet-tile-pane{filter:none}
+#locBtn{position:absolute;right:10px;bottom:30px;z-index:1000;padding:9px 13px;background:#fff;color:#1a73e8;border:1px solid rgba(0,0,0,.25);border-radius:20px;font:600 13px/1 inherit;box-shadow:0 2px 6px rgba(0,0,0,.3);cursor:pointer}
+#locBtn.on{background:#1a73e8;color:#fff}
+.me-dot{width:16px;height:16px;border-radius:50%;background:#1a73e8;border:3px solid #fff;box-shadow:0 0 0 2px rgba(26,115,232,.35),0 1px 4px rgba(0,0,0,.5)}
+#mapmsg{padding:30px 16px;text-align:center;color:var(--sub);border:1px solid var(--line)}
+#panel{margin-top:12px;padding:16px}
+#pinfo{min-height:44px}#pinfo b{font-family:var(--serif);font-size:20px;font-weight:600}#pinfo div{font-size:12px;color:var(--sub);margin-top:2px}
+.prog{display:flex;align-items:center;gap:12px;margin:12px 0}.prog .bar{flex:1;height:1px;background:var(--line);overflow:visible}.prog .bar i{display:block;height:1px;background:var(--gold);width:0;transition:width .4s}.prog span{font-size:11px;letter-spacing:.1em;color:var(--gold);white-space:nowrap}
+.ctrl{display:flex;gap:8px}.ctrl button{flex:1;padding:11px;border:1px solid var(--line);border-radius:2px;font-size:12px;letter-spacing:.14em;color:var(--gold)}.ctrl button.go{background:var(--gold);color:#1a1208;border-color:var(--gold)}
+.ctrl button:disabled{opacity:.3}
 .pinicon,.char{background:none;border:0}
 .pinw{position:relative;width:28px;height:28px}
-.pinb{width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)}
-.pinb.v{background:var(--navy)}
-.pinl{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);background:#fff;border-radius:8px;padding:2px 7px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.25);max-width:150px;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
-.charin{pointer-events:none;filter:drop-shadow(0 3px 2px rgba(0,0,0,.3))}.charin svg{display:block}
+.pinb{width:26px;height:26px;border-radius:50%;background:var(--wine);color:var(--text);font-family:var(--serif);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--gold);box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.pinb.v{background:var(--gold);color:#1a1208}
+.pinl{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);background:#0b1712;color:var(--text);border:1px solid var(--line);padding:2px 8px;font-size:11px;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis}
+.charin{pointer-events:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}.charin svg{display:block}
 
-/* sheet */
 #sheetWrap{position:fixed;inset:0;z-index:100}
-.backdrop{position:absolute;inset:0;background:rgba(10,20,35,.5);opacity:0;transition:opacity .25s}
-.sheet{position:absolute;left:0;right:0;bottom:0;max-width:560px;margin:0 auto;background:#fff;border-radius:22px 22px 0 0;max-height:92vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .28s cubic-bezier(.2,.8,.2,1);padding-bottom:var(--sab)}
+.backdrop{position:absolute;inset:0;background:rgba(4,10,7,.74);opacity:0;transition:opacity .25s}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-width:560px;margin:0 auto;background:#10231b;border-top:1px solid var(--gold);border-radius:0;max-height:92vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1);padding-bottom:var(--sab)}
 #sheetWrap.open .backdrop{opacity:1}#sheetWrap.open .sheet{transform:none}
-.grab{width:40px;height:4px;border-radius:9px;background:#d5dce3;margin:8px auto 0}
-.sheethead{display:flex;align-items:center;justify-content:space-between;padding:8px 16px 4px}.sheethead h3{margin:0;font-size:18px}.x{font-size:18px;color:var(--sub);padding:6px 8px}
-#sheetBody{overflow-y:auto;padding:8px 16px 20px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
-.fl{display:block;margin:10px 0 0;font-size:12px;color:var(--sub);font-weight:700}
-.fl input,.fl textarea,.fl select{display:block;width:100%;margin-top:4px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fbfcfd}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grab{width:36px;height:1px;background:var(--gold);margin:12px auto 0;opacity:.6}
+.sheethead{display:flex;align-items:center;justify-content:space-between;padding:10px 20px 4px}.sheethead h3{margin:0;font-family:var(--serif);font-size:24px;font-weight:600;font-style:italic}.x{font-size:15px;color:var(--sub);padding:6px 8px}
+#sheetBody{overflow-y:auto;padding:8px 20px 26px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.fl{display:block;margin:14px 0 0;font-size:10px;letter-spacing:.24em;color:var(--gold);font-weight:500}
+.fl input,.fl textarea,.fl select{display:block;width:100%;margin-top:5px;padding:11px 12px;border:1px solid var(--line);border-radius:2px;background:rgba(255,255,255,.03)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
-.sc{padding:6px 11px;border-radius:999px;background:#eef2f6;font-size:13px;font-weight:600;color:var(--text)}
-.sc.on{background:var(--navy);color:#fff}
-.srow{display:flex;gap:8px;margin-top:16px}.srow button{flex:1;padding:13px;border-radius:12px;font-weight:800}
-.b-p{background:var(--navy);color:#fff;flex:2!important}.b-d{background:#fdeeea;color:#b3402a}.b-c{background:#eef2f6;color:var(--navy)}
-.drow{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f3f6f9;border-radius:10px;margin-top:6px;font-size:13px}.drow span{flex:1;word-break:break-all}
-.tl{display:flex;align-items:center;gap:8px;padding:12px;border:1px solid var(--line);border-radius:14px;margin-top:8px}
-.tl.on{border-color:var(--navy);background:#f1f6fb}.tl .tm{flex:1;min-width:0;text-align:left}.tl .tm b{display:block}.tl .tm small{color:var(--sub)}
-.tl .mini{padding:5px 9px;border-radius:9px;background:#eef2f6;font-size:12px;font-weight:700}.tl .mini.d{background:#fdeeea;color:#b3402a}
-.setrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 0;border-bottom:1px solid var(--line)}.setrow small{display:block;color:var(--sub)}
-.setrow button{padding:7px 12px;border-radius:10px;background:#eef2f6;font-weight:700;font-size:13px;white-space:nowrap}
-.hcard{padding:12px;border:1px solid var(--line);border-radius:14px;margin-top:8px}.hcard b{display:block;margin-bottom:2px}.hcard span{color:var(--sub);font-size:13px}
+.sc{padding:6px 12px;border:1px solid var(--line);border-radius:2px;font-size:12px;color:var(--text)}
+.sc.on{background:var(--gold);color:#1a1208;border-color:var(--gold)}
+.srow{display:flex;gap:8px;margin-top:20px}.srow button{flex:1;padding:13px;border-radius:2px;font-size:12px;letter-spacing:.16em}
+.b-p{background:var(--gold);color:#1a1208;flex:2!important}.b-d{border:1px solid rgba(201,138,138,.4);color:#c98a8a}.b-c{border:1px solid var(--line);color:var(--text)}
+.drow{display:flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid var(--line);margin-top:6px;font-size:13px}.drow span{flex:1;word-break:break-all}
+.tl{display:flex;align-items:center;gap:8px;padding:12px;border:1px solid var(--line);margin-top:8px}
+.tl.on{border-color:var(--gold);background:rgba(201,169,106,.08)}.tl .tm{flex:1;min-width:0;text-align:left}.tl .tm b{display:block;font-family:var(--serif);font-size:17px}.tl .tm small{color:var(--sub)}
+.tl .mini{padding:4px 10px;border:1px solid var(--line);font-size:11px;color:var(--gold)}.tl .mini.d{color:#c98a8a}
+.setrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 0;border-bottom:1px solid var(--line)}.setrow small{display:block;color:var(--sub)}
+.setrow button{padding:6px 14px;border:1px solid var(--line);font-size:12px;letter-spacing:.08em;color:var(--gold);white-space:nowrap}
+.hcard{padding:14px;border:1px solid var(--line);margin-top:8px}.hcard b{display:block;margin-bottom:2px;font-family:var(--serif);font-size:17px}.hcard span{color:var(--sub);font-size:13px}
 .note{font-size:12px;color:var(--sub);margin-top:8px}
 
-#toast{position:fixed;left:50%;bottom:calc(86px + var(--sab));transform:translate(-50%,20px);background:rgba(28,39,51,.94);color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:200;max-width:90vw;text-align:center}
+#toast{position:fixed;left:50%;bottom:calc(86px + var(--sab));transform:translate(-50%,16px);background:var(--text);color:#1a1208;padding:10px 20px;font-size:12px;letter-spacing:.06em;opacity:0;pointer-events:none;transition:.25s;z-index:200;max-width:90vw;text-align:center}
 #toast.show{opacity:1;transform:translate(-50%,0)}
-#alarmPop{position:fixed;left:12px;right:12px;top:calc(10px + var(--sat));max-width:536px;margin:0 auto;z-index:210;background:var(--orange);color:#fff;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
-#alarmPop b{display:block}#alarmPop div{flex:1}#alarmPop button{background:rgba(255,255,255,.25);padding:6px 12px;border-radius:10px;font-weight:700}
+#alarmPop{position:fixed;left:14px;right:14px;top:calc(12px + var(--sat));max-width:532px;margin:0 auto;z-index:210;background:var(--wine);border:1px solid var(--gold);color:var(--text);padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 36px rgba(0,0,0,.6)}
+#alarmPop>span{filter:grayscale(1) sepia(1) brightness(1.4)}
+#alarmPop b{display:block;font-family:var(--serif);font-size:17px}#alarmPop div{flex:1}#alarmPop button{border:1px solid var(--gold);padding:5px 14px;font-size:12px;color:var(--gold)}
+
+
+.stoprow{margin-top:10px;padding:10px;border:1px solid var(--line)}
+.stoprow .sCity{display:block;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:2px;background:rgba(255,255,255,.03)}
+.sdates{display:flex;gap:6px;align-items:center;margin-top:8px;color:var(--sub)}
+.sdates input{flex:1;min-width:0;padding:9px 8px;border:1px solid var(--line);border-radius:2px;background:rgba(255,255,255,.03);font-size:14px}
+.stdel{flex:none;padding:6px 10px;color:#c98a8a}
+#snow{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
+#snow i{position:absolute;top:-10px;border-radius:50%;background:#fff;animation:fall linear infinite}
+@keyframes fall{to{transform:translate(var(--dx),108vh)}}
 </style>
 </head>
 <body>
 <div id="appbar">
-  <div class="logo">✈️ J플래너</div>
+  <div class="logo"><svg viewBox="0 0 10 10"><path d="M5 0l1.3 3.7L10 5 6.3 6.3 5 10 3.7 6.3 0 5l3.7-1.3z"/></svg>J플래너</div>
   <button class="apbtn" data-act="help">사용법</button>
   <button class="tripname" data-act="trips"><span id="appTitle"></span> ▾</button>
   <button class="plus" data-act="newtrip" aria-label="새 여행">+</button>
 </div>
 <div id="app">
   <header id="hero">
-    <button id="camBtn" data-act="camera" aria-label="배경 사진">📷</button>
+    <button id="camBtn" data-act="camera" aria-label="배경 사진"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h3l1.5-2h7l1.5 2h3v10H4z"/><circle cx="12" cy="13.2" r="3.2"/></svg></button>
     <div id="heroLabel"></div>
     <div id="heroTitle"></div>
     <div id="heroSub"></div>
@@ -160,7 +174,7 @@ h4.sec{margin:16px 2px 8px;font-size:14px;color:var(--sub)}
   </div>
   <main id="pgS" class="page"></main>
   <main id="pgO" class="page" hidden>
-    <div id="mapwrap"><div id="map"></div><div id="mapmsg" hidden>지도를 불러오지 못했어요.<br>인터넷에 연결한 뒤 다시 열어주세요.</div></div>
+    <div id="mapwrap"><div id="map"></div><button id="locBtn" type="button" onclick="toggleLoc()" aria-label="내 위치">◎ 내 위치</button><div id="mapmsg" hidden>지도를 불러오지 못했어요.<br>인터넷에 연결한 뒤 다시 열어주세요.</div></div>
     <div id="panel" class="card">
       <div id="pinfo"></div>
       <div class="prog"><div class="bar"><i id="progBar"></i></div><span id="progTxt"></span></div>
@@ -179,6 +193,8 @@ h4.sec{margin:16px 2px 8px;font-size:14px;color:var(--sub)}
     <div id="sheetBody"></div>
   </div>
 </div>
+<div id="snow"></div>
+<script>(function(){var b=document.getElementById("snow"),h="";for(var i=0;i<28;i++){var z=2+Math.random()*3;h+='<i style="left:'+(Math.random()*100)+'%;width:'+z+'px;height:'+z+'px;opacity:'+(.25+Math.random()*.4)+';animation-duration:'+(9+Math.random()*10)+'s;animation-delay:-'+(Math.random()*14)+'s;--dx:'+((Math.random()*60)-30)+'px"></i>'}b.innerHTML=h})()</script>
 <div id="toast"></div>
 <div id="alarmPop" hidden><span style="font-size:26px">⏰</span><div><b id="apT"></b><span id="apS"></span></div><button data-act="closealarm">확인</button></div>
 <input type="file" id="bgIn" accept="image/*" hidden>
@@ -189,7 +205,7 @@ h4.sec{margin:16px 2px 8px;font-size:14px;color:var(--sub)}
 'use strict';
 var $=function(s){return document.querySelector(s)},$$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
 var KEY='jplanner.v1';
-var CATS={'항공':{e:'✈️',c:'#3f7cb0'},'숙소':{e:'🏨',c:'#8a6bbf'},'식당':{e:'🍽️',c:'#d9724a'},'카페':{e:'☕',c:'#a9734a'},'명소':{e:'📍',c:'#2f9e78'},'이동':{e:'🚆',c:'#5b7083'},'쇼핑':{e:'🛍️',c:'#d4577f'},'기타':{e:'📌',c:'#6b7a89'}};
+var CATS={'항공':{e:'✈️',c:'#c9a96a'},'숙소':{e:'🏨',c:'#c9a96a'},'식당':{e:'🍽️',c:'#c9a96a'},'카페':{e:'☕',c:'#c9a96a'},'명소':{e:'📍',c:'#c9a96a'},'이동':{e:'🚆',c:'#c9a96a'},'쇼핑':{e:'🛍️',c:'#c9a96a'},'기타':{e:'📌',c:'#c9a96a'}};
 var MOVES=['도보','지하철','버스','트램','기차','택시','항공','자전거'];
 var DOW=['일','월','화','수','목','금','토'];
 function p2(n){return String(n).padStart(2,'0')}
@@ -205,27 +221,16 @@ function mdShort(s){var d=pd(s);return (d.getMonth()+1)+'/'+d.getDate()}
 function addDays(s,n){var d=pd(s);d.setDate(d.getDate()+n);return fd(d)}
 function diffDays(a,b){return Math.round((pd(b)-pd(a))/864e5)}
 function listDays(t){var out=[],a=pd(t.start),b=pd(t.end);if(b<a)b=a;for(var d=new Date(a),n=0;d<=b&&n<120;d.setDate(d.getDate()+1),n++)out.push(fd(d));return out}
-function cityFor(t,i,total){var c=t.cities;if(!c||!c.length)return '';return c[Math.min(c.length-1,Math.floor(i*c.length/total))]}
+function cityFor(t,i,total){if(t.stops&&t.stops.length){var dd=listDays(t)[i],o=[];t.stops.forEach(function(x){if(dd>=x.from&&dd<=x.to&&o[o.length-1]!==x.city)o.push(x.city)});return o.join(' → ')}var c=t.cities;if(!c||!c.length)return '';return c[Math.min(c.length-1,Math.floor(i*c.length/total))]}
 
 /* ---------- store ---------- */
 function mk(day,time,cat,name,place,lat,lng,move,memo,alarm){return {id:uid(),day:day,time:time,cat:cat,name:name,place:place,mapUrl:'',memo:memo||'',move:move||'',alarm:alarm||'',lat:lat,lng:lng,userDocs:[]}}
 function seed(){
-  var start=addDays(todayStr(),30),d=function(n){return addDays(start,n)};
-  var t={id:uid(),title:'도쿄 2박 3일',start:start,end:d(2),note:'2인',cities:['도쿄'],bg:'',
-    flights:[{id:uid(),date:start,no:'KE703',from:'ICN',fromCity:'서울',depart:'08:30',to:'HND',toCity:'도쿄',arrive:'10:50'},
-             {id:uid(),date:d(2),no:'KE706',from:'HND',fromCity:'도쿄',depart:'19:00',to:'ICN',toCity:'서울',arrive:'21:40'}],
-    items:[
-      mk(d(0),'14:00','숙소','신주쿠 호텔 체크인','신주쿠역 호텔',35.6896,139.7006,'지하철','짐 맡기고 바로 출발'),
-      mk(d(0),'16:30','명소','시부야 스카이','시부야 스카이',35.6585,139.7022,'지하철','일몰 시간에 맞춰서','16:00'),
-      mk(d(0),'19:00','식당','이치란 라멘 시부야','이치란 시부야',35.6611,139.6989,'도보',''),
-      mk(d(1),'10:00','명소','센소지','센소지',35.7148,139.7967,'지하철','아침 일찍 가면 한산해요','09:30'),
-      mk(d(1),'13:00','식당','츠키지 장외시장','츠키지 장외시장',35.6655,139.7707,'지하철','해산물 점심'),
-      mk(d(1),'15:30','카페','긴자 카페','긴자 카페',35.6717,139.7640,'도보',''),
-      mk(d(2),'11:00','명소','메이지 신궁','메이지 신궁',35.6764,139.6993,'지하철','')
-    ]};
+  var start=todayStr();
+  var t={id:uid(),title:'새 여행',start:start,end:addDays(start,2),note:'',cities:[],bg:'',flights:[],items:[],ph:true};
   return {trips:[t],activeId:t.id};
 }
-function normTrip(t){t.cities=Array.isArray(t.cities)?t.cities:[];t.flights=Array.isArray(t.flights)?t.flights:[];t.items=Array.isArray(t.items)?t.items:[];t.items.forEach(function(i){i.userDocs=Array.isArray(i.userDocs)?i.userDocs:[]});t.note=t.note||'';t.bg=t.bg||'';return t}
+function normTrip(t){t.stops=Array.isArray(t.stops)?t.stops:[];t.cities=Array.isArray(t.cities)?t.cities:[];t.flights=Array.isArray(t.flights)?t.flights:[];t.items=Array.isArray(t.items)?t.items:[];t.items.forEach(function(i){i.userDocs=Array.isArray(i.userDocs)?i.userDocs:[]});t.note=t.note||'';t.bg=t.bg||'';return t}
 function loadStore(){
   try{var raw=localStorage.getItem(KEY);if(raw){var s=JSON.parse(raw);if(s&&Array.isArray(s.trips)&&s.trips.length){s.trips.forEach(normTrip);if(!s.trips.some(function(t){return t.id===s.activeId}))s.activeId=s.trips[0].id;return s}}}catch(e){}
   return seed();
@@ -243,7 +248,7 @@ function initDay(){var t=cur(),days=listDays(t);if(ui.day&&days.indexOf(ui.day)>
 
 /* ---------- utils ---------- */
 var toastT;
-function toast(m){var el=$('#toast');el.textContent=m;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){el.classList.remove('show')},2200)}
+function toast(m){var el=$('#toast');el.textContent=m;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){el.classList.remove('show')},4500)}
 var armedKey=null,armedT;
 function armed(key,msg){if(armedKey===key){armedKey=null;clearTimeout(armedT);return true}armedKey=key;clearTimeout(armedT);armedT=setTimeout(function(){armedKey=null},3000);toast(msg||'한 번 더 누르면 삭제돼요');return false}
 function download(name,text,type){var b=new Blob([text],{type:type});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1500)}
@@ -258,9 +263,16 @@ function mq(it){return it.place||it.name}
 function dirUrl(it){return it.mapUrl||('https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(mq(it)))}
 function viewUrl(it){return it.mapUrl||('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(mq(it)))}
 function coordsFromUrl(u){var m=/@(-?\d+\.\d+),(-?\d+\.\d+)/.exec(u||'')||/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/.exec(u||'');return m?{lat:+m[1],lng:+m[2]}:null}
-function geocode(q){
+function geoFetch(url,pick){
   var ctrl=new AbortController(),to=setTimeout(function(){ctrl.abort()},8000);
-  return fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=ko&q='+encodeURIComponent(q),{signal:ctrl.signal}).then(function(r){clearTimeout(to);return r.json()}).then(function(j){if(j&&j[0])return{lat:+j[0].lat,lng:+j[0].lon};return null}).catch(function(){clearTimeout(to);return null});
+  return fetch(url,{signal:ctrl.signal}).then(function(r){clearTimeout(to);if(!r.ok)throw 0;return r.json()}).then(pick).catch(function(){clearTimeout(to);return null});
+}
+function geocode(q){
+  var e=encodeURIComponent(q);
+  return geoFetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=ko&q='+e,function(j){return j&&j[0]?{lat:+j[0].lat,lng:+j[0].lon}:null}).then(function(r){
+    if(r)return r;
+    return geoFetch('https://photon.komoot.io/api/?limit=1&q='+e,function(j){var f=j&&j.features&&j.features[0];return f?{lat:f.geometry.coordinates[1],lng:f.geometry.coordinates[0]}:null});
+  });
 }
 
 /* ---------- ICS ---------- */
@@ -292,7 +304,7 @@ function renderHero(){
   if(td<t.start)b='D-'+diffDays(td,t.start);else if(td===t.start)b='D-DAY';else if(td<=t.end)b='여행 '+(diffDays(t.start,td)+1)+'일차';else b='여행 종료';
   $('#dday').textContent=b;
   var h=$('#hero');
-  h.style.backgroundImage=t.bg?'linear-gradient(rgba(10,30,55,.3),rgba(10,30,55,.65)),url("'+t.bg+'")':'';
+  h.style.backgroundImage=t.bg?'linear-gradient(rgba(40,8,14,.35),rgba(10,20,15,.8)),url("'+t.bg+'")':'';
 }
 function renderDayTabs(){
   var t=cur(),days=listDays(t);
@@ -401,11 +413,31 @@ function saveItem(){
 }
 function deleteItem(id){var t=cur();t.items=t.items.filter(function(x){return x.id!==id});save();closeSheet();renderAll();toast('삭제했어요')}
 
+var AP={'서울':'ICN','인천':'ICN','부산':'PUS','제주':'CJU','베이징':'PEK','상하이':'PVG','홍콩':'HKG','타이베이':'TPE','도쿄':'HND','오사카':'KIX','후쿠오카':'FUK','삿포로':'CTS','방콕':'BKK','싱가포르':'SIN','하노이':'HAN','호치민':'SGN','다낭':'DAD','세부':'CEB','괌':'GUM','부다페스트':'BUD','프라하':'PRG','비엔나':'VIE','빈':'VIE','파리':'CDG','런던':'LHR','로마':'FCO','밀라노':'MXP','바르셀로나':'BCN','마드리드':'MAD','암스테르담':'AMS','프랑크푸르트':'FRA','뮌헨':'MUC','취리히':'ZRH','이스탄불':'IST','두바이':'DXB','뉴욕':'JFK','로스앤젤레스':'LAX','샌프란시스코':'SFO','시드니':'SYD'};
+var APC={ICN:'서울',GMP:'서울',PUS:'부산',CJU:'제주',PEK:'베이징',PKX:'베이징',PVG:'상하이',HKG:'홍콩',TPE:'타이베이',HND:'도쿄',NRT:'도쿄',KIX:'오사카',FUK:'후쿠오카',CTS:'삿포로',BKK:'방콕',SIN:'싱가포르',HAN:'하노이',SGN:'호치민',DAD:'다낭',CEB:'세부',GUM:'괌',BUD:'부다페스트',PRG:'프라하',VIE:'비엔나',CDG:'파리',LHR:'런던',FCO:'로마',MXP:'밀라노',BCN:'바르셀로나',MAD:'마드리드',AMS:'암스테르담',FRA:'프랑크푸르트',MUC:'뮌헨',ZRH:'취리히',IST:'이스탄불',DXB:'두바이',JFK:'뉴욕',LAX:'로스앤젤레스',SFO:'샌프란시스코',SYD:'시드니'};
+function flightDefaults(t){var st=stopsFor(t),first=st.length?st[0].city:'',last=st.length?st[st.length-1].city:'',d={};
+  if(!t.flights.length){d.date=t.start;d.toCity=first;d.to=AP[first]||''}
+  else{var f0=t.flights[0];d.date=t.end;d.fromCity=last;d.from=AP[last]||'';d.toCity=f0.fromCity;d.to=f0.from}
+  return d}
+document.addEventListener('input',function(ev){var x=ev.target,m={gFrom:['gFromC',0],gTo:['gToC',0],gFromC:['gFrom',1],gToC:['gTo',1]}[x&&x.id];if(!m)return;var o=document.getElementById(m[0]);if(!o||o.value)return;var v=x.value.trim();if(m[1]){if(AP[v])o.value=AP[v]}else{v=v.toUpperCase();if(APC[v])o.value=APC[v]}});
+var AL={KE:'KAL',OZ:'AAR',LJ:'JNA',TW:'TWB',BX:'ABL',ZE:'ESR',RS:'ASV',YP:'APZ','7C':'JJA',LH:'DLH',OS:'AUA',LX:'SWR',AF:'AFR',BA:'BAW',KL:'KLM',AY:'FIN',TK:'THY',EK:'UAE',QR:'QTR',SQ:'SIA',CX:'CPA',NH:'ANA',JL:'JAL',CA:'CCA',MU:'CES',CZ:'CSN',TG:'THA',VN:'HVN',W6:'WZZ',FR:'RYR',U2:'EZY',AA:'AAL',UA:'UAL',DL:'DAL',SU:'AFL'};
+function lookupFlight(no){var m=/^([A-Z0-9]{2})(\d{1,4})$/.exec(no);if(!m)return Promise.reject();var c=[no];if(AL[m[1]])c.unshift(AL[m[1]]+m[2]);
+  function go(i){if(i>=c.length)return Promise.reject();return fetch('https://api.adsbdb.com/v0/callsign/'+c[i]).then(function(r){return r.ok?r.json():Promise.reject()}).then(function(j){var fr=j&&j.response&&j.response.flightroute;if(!fr||!fr.origin||!fr.destination)return Promise.reject();return fr}).catch(function(){return go(i+1)})}
+  return go(0)}
+function apInfo(a){var i=(a.iata_code||a.iata||a.iataCode||'').toUpperCase();return {code:i,city:APC[i]||a.municipalityName||a.municipality||a.city||''}}
+function getAeroKey(){try{return localStorage.getItem('jplanner.aerokey')||''}catch(e){return ''}}
+function aeroLookup(no,date,key){return fetch('https://aerodatabox.p.rapidapi.com/flights/number/'+no+'/'+date,{headers:{'X-RapidAPI-Key':key,'X-RapidAPI-Host':'aerodatabox.p.rapidapi.com'}}).then(function(r){if(r.status===204||r.status===404)return Promise.reject('nf');if(!r.ok)return Promise.reject('e'+r.status);return r.json()}).then(function(j){var a=Array.isArray(j)?j:(j&&j.flights)||[],f=a.filter(function(x){return x.departure&&x.arrival&&x.departure.airport&&x.arrival.airport})[0];if(!f)return Promise.reject('nf');var tm=function(p){var q=p.scheduledTime||p.scheduledTimeLocal||p.revisedTime||{},l=typeof q==='string'?q:(q.local||''),m=/(\d{2}:\d{2})/.exec(l.split(' ')[1]||l.split('T')[1]||l);return m?m[1]:''};return {o:f.departure.airport,d:f.arrival.airport,dep:tm(f.departure),arr:tm(f.arrival)}})}
+function fillFlight(o,d){if(o.code)$('#gFrom').value=o.code;$('#gFromC').value=o.city||'';if(d.code)$('#gTo').value=d.code;$('#gToC').value=d.city||''}
+function flightLookup(){var n=$('#gNo');if(!n)return;var no=n.value.replace(/\s/g,'').toUpperCase(),date=$('#gDate').value,key=getAeroKey();if(!no)return;n.value=no;
+  var routeOnly=function(msg){lookupFlight(no).then(function(fr){var o=apInfo(fr.origin),d=apInfo(fr.destination);if(!o.code||!d.code)throw 0;fillFlight(o,d);toast(msg||(o.code+' → '+d.code+' 노선을 채웠어요. 시간은 설정에서 키를 등록하면 자동으로 채워져요'))}).catch(function(){toast('노선을 찾지 못했어요. 직접 입력해주세요')})};
+  if(key&&date){toast('시간표 조회 중…');aeroLookup(no,date,key).then(function(r){var o=apInfo(r.o),d=apInfo(r.d);fillFlight(o,d);if(r.dep)$('#gDep').value=r.dep;if(r.arr)$('#gArr').value=r.arr;toast(o.code+' '+(r.dep||'')+' → '+d.code+' '+(r.arr||'')+' 자동으로 채웠어요')}).catch(function(e){routeOnly(e==='nf'?'이 날짜 시간표가 없어 노선만 채웠어요. 시간은 직접 입력해주세요':'시간표 조회에 실패해 노선만 채웠어요 (키/네트워크 확인)')})}
+  else routeOnly()}
+document.addEventListener('change',function(ev){var x=ev.target;if(!x)return;if(x.id==='gNo')flightLookup();else if(x.id==='gDate'&&getAeroKey()&&$('#gNo')&&$('#gNo').value)flightLookup()});
 function openFlightSheet(id){
   var t=cur(),f=id?t.flights.find(function(x){return x.id===id}):null;form={fid:id||null};
-  var v=function(k,d){return esc(f?f[k]:(d||''))};
+  var D=f?{}:flightDefaults(t);var v=function(k,d){return esc(f?f[k]:(D[k]!=null?D[k]:(d||'')))};
   openSheet(f?'항공편 편집':'항공편 추가',
-  '<div class="row2"><label class="fl">날짜<input type="date" id="gDate" value="'+(f?f.date:t.start)+'"></label><label class="fl">편명<input id="gNo" value="'+v('no')+'" placeholder="KE703"></label></div>'+
+  '<div class="row2"><label class="fl">날짜<input type="date" id="gDate" value="'+(f?f.date:(D.date||t.start))+'"></label><label class="fl">편명<input id="gNo" value="'+v('no')+'" placeholder="KE703"></label></div>'+
   '<div class="row2"><label class="fl">출발 공항코드<input id="gFrom" value="'+v('from')+'" placeholder="ICN" maxlength="4"></label><label class="fl">출발 도시<input id="gFromC" value="'+v('fromCity')+'" placeholder="서울"></label></div>'+
   '<label class="fl">출발 시간<input type="time" id="gDep" value="'+v('depart','09:00')+'"></label>'+
   '<div class="row2"><label class="fl">도착 공항코드<input id="gTo" value="'+v('to')+'" placeholder="HND" maxlength="4"></label><label class="fl">도착 도시<input id="gToC" value="'+v('toCity')+'" placeholder="도쿄"></label></div>'+
@@ -420,6 +452,10 @@ function saveFlight(){
   save();closeSheet();renderSchedule();toast('저장했어요');
 }
 
+function stopsFor(t){if(!t)return [];if(t.stops&&t.stops.length)return t.stops;var days=listDays(t),out=[];if(!t.cities.length)return out;days.forEach(function(d,i){var c=cityFor({cities:t.cities},i,days.length),l=out[out.length-1];if(l&&l.city===c)l.to=d;else out.push({city:c,from:d,to:d})});return out}
+function stopRow(c,f,e){return '<div class="stoprow"><input class="sCity" placeholder="도시 (예: 프라하)" value="'+esc(c||'')+'"><div class="sdates"><input type="date" class="sFrom" value="'+(f||'')+'"><span>~</span><input type="date" class="sTo" value="'+(e||'')+'"><button type="button" class="stdel" data-act="delstop" aria-label="삭제">✕</button></div></div>'}
+function syncTripDates(){var f=[],e=[];$$('#stopList .stoprow').forEach(function(r){var a=r.querySelector('.sFrom').value,b=r.querySelector('.sTo').value||a;if(a){f.push(a);e.push(b)}});if(f.length&&$('#tStart')){$('#tStart').value=f.slice().sort()[0];$('#tEnd').value=e.slice().sort().pop()}}
+document.addEventListener('change',function(ev){var x=ev.target;if(!x||!x.classList)return;if(x.classList.contains('sFrom')||x.classList.contains('sTo'))syncTripDates();else if(x.id==='tStart'){var en=$('#tEnd');if(en&&en.value<x.value)en.value=x.value}});
 function openTripSheet(id){
   var t=id?store.trips.find(function(x){return x.id===id}):null;form={tid:id||null};
   var td=todayStr();
@@ -427,26 +463,28 @@ function openTripSheet(id){
   '<label class="fl">여행 제목<input id="tTitle" value="'+esc(t?t.title:'')+'" placeholder="예: 오사카 3박 4일"></label>'+
   '<div class="row2"><label class="fl">시작일<input type="date" id="tStart" value="'+(t?t.start:td)+'"></label><label class="fl">종료일<input type="date" id="tEnd" value="'+(t?t.end:addDays(td,2))+'"></label></div>'+
   '<label class="fl">부제 (예: 2인)<input id="tNote" value="'+esc(t?t.note:'')+'" placeholder="2인"></label>'+
-  '<label class="fl">도시 (쉼표로 구분, 날짜순)<input id="tCities" value="'+esc(t?t.cities.join(', '):'')+'" placeholder="도쿄, 하코네"></label>'+
-  '<div class="srow">'+(t&&store.trips.length>1?'<button class="b-d" data-act="deltrip" data-id="'+t.id+'">삭제</button>':'')+'<button class="b-c" data-act="closesheet">취소</button><button class="b-p" data-act="savetrip">저장</button></div>');
+  '<div class="fl">도시별 일정 (도시와 날짜 구간)</div><div id="stopList">'+stopsFor(t).map(function(x){return stopRow(x.city,x.from,x.to)}).join('')+'</div><button type="button" class="addline" style="margin-top:10px" data-act="addstop">+ 도시 구간 추가</button><div class="note">같은 날 도시가 겹치면 \'A → B\'로 표시돼요 (이동하는 날) · 여행 시작일/종료일은 도시 날짜에 맞춰 자동으로 바뀌어요</div>'+
+  '<div class="srow">'+(t?'<button class="b-d" data-act="deltrip" data-id="'+t.id+'">삭제</button>':'')+'<button class="b-c" data-act="closesheet">취소</button><button class="b-p" data-act="savetrip">저장</button></div>');
 }
-function saveTrip(){
-  var title=$('#tTitle').value.trim(),start=$('#tStart').value,end=$('#tEnd').value,note=$('#tNote').value.trim(),cities=$('#tCities').value.split(',').map(function(s){return s.trim()}).filter(Boolean);
+function saveTrip(){syncTripDates();
+  var title=$('#tTitle').value.trim(),start=$('#tStart').value,end=$('#tEnd').value,note=$('#tNote').value.trim(),cities=[],stops=[],bad=0;$$('#stopList .stoprow').forEach(function(r){var c=r.querySelector('.sCity').value.trim(),f=r.querySelector('.sFrom').value,e=r.querySelector('.sTo').value||f;if(!c)return;if(!f||e<f)bad=1;stops.push({city:c,from:f,to:e});cities.push(c)});
   if(!title){toast('여행 제목을 입력해주세요');return}
   if(!start||!end){toast('날짜를 입력해주세요');return}
   if(end<start){toast('종료일이 시작일보다 빨라요');return}
-  if(form.tid){var t=store.trips.find(function(x){return x.id===form.tid});t.title=title;t.start=start;t.end=end;t.note=note;t.cities=cities}
-  else{var n={id:uid(),title:title,start:start,end:end,note:note,cities:cities,bg:'',flights:[],items:[]};store.trips.push(n);store.activeId=n.id}
+  if(bad){toast('도시 날짜 구간을 확인해주세요');return}
+  if(form.tid){var t=store.trips.find(function(x){return x.id===form.tid});var oS=t.start,oE=t.end;t.title=title;t.start=start;t.end=end;t.note=note;t.cities=cities;t.stops=stops;t.ph=false;t.flights.forEach(function(f){if(f.date===oS)f.date=start;else if(f.date===oE)f.date=end})}
+  else{if(store.trips.length===1&&store.trips[0].ph&&!store.trips[0].items.length&&!store.trips[0].flights.length)store.trips=[];var n={id:uid(),title:title,start:start,end:end,note:note,cities:cities,stops:stops,bg:'',flights:[],items:[]};store.trips.push(n);store.activeId=n.id}
   save();closeSheet();ui.day=null;renderAll();toast('저장했어요');
 }
 function deleteTrip(id){
-  if(store.trips.length<2)return;
   store.trips=store.trips.filter(function(t){return t.id!==id});
-  if(store.activeId===id)store.activeId=store.trips[0].id;
-  save();ui.day=null;renderAll();toast('여행을 삭제했어요');
+  var last=!store.trips.length;
+  if(last){store=seed()}
+  else if(store.activeId===id)store.activeId=store.trips[0].id;
+  save();ui.day=null;renderAll();toast('여행을 삭제했어요');return last;
 }
 function openTripsSheet(){
-  var h=store.trips.map(function(t){var on=t.id===store.activeId;return '<div class="tl'+(on?' on':'')+'"><button class="tm" data-act="switchtrip" data-id="'+t.id+'"><b>'+(on?'✓ ':'')+esc(t.title)+'</b><small>'+mdShort(t.start)+' – '+mdShort(t.end)+' · 일정 '+t.items.length+'개</small></button><button class="mini" data-act="edittrip" data-id="'+t.id+'">편집</button>'+(store.trips.length>1?'<button class="mini d" data-act="deltripl" data-id="'+t.id+'">삭제</button>':'')+'</div>'}).join('');
+  var h=store.trips.map(function(t){var on=t.id===store.activeId;return '<div class="tl'+(on?' on':'')+'"><button class="tm" data-act="switchtrip" data-id="'+t.id+'"><b>'+(on?'✓ ':'')+esc(t.title)+'</b><small>'+mdShort(t.start)+' – '+mdShort(t.end)+' · 일정 '+t.items.length+'개</small></button><button class="mini" data-act="edittrip" data-id="'+t.id+'">편집</button>'+'<button class="mini d" data-act="deltripl" data-id="'+t.id+'">삭제</button>'+'</div>'}).join('');
   openSheet('내 여행 목록',h+'<div class="srow"><button class="b-p" data-act="newtrip">+ 새 여행 만들기</button></div>');
 }
 
@@ -463,7 +501,8 @@ function openSettings(){
   '<div class="setrow"><div>JSON 내보내기<small>전체 여행 백업</small></div><button data-act="export">내보내기</button></div>'+
   '<div class="setrow"><div>JSON 불러오기<small>백업 파일로 복원 (현재 데이터 덮어쓰기)</small></div><button data-act="import">불러오기</button></div>'+
   '<div class="setrow"><div>전체 일정 캘린더<small>이 여행의 모든 일정을 .ics로</small></div><button data-act="icsall">내보내기</button></div>'+
-  '<div class="setrow"><div>전체 초기화<small>두 번 눌러야 실행돼요</small></div><button data-act="reset" style="color:#b3402a">초기화</button></div>');
+  '<div class="setrow"><div>항공 시간 자동조회<small>'+(getAeroKey()?'키 등록됨 · 편명+날짜로 출발·도착 시간을 채워요':'AeroDataBox(RapidAPI) 무료 키를 넣으면 시간까지 채워요')+'</small></div><button data-act="aerokey">'+(getAeroKey()?'변경':'등록')+'</button></div>'+
+  '<div class="setrow"><div>전체 초기화<small>두 번 눌러야 실행돼요</small></div><button data-act="reset" style="color:#ff7a8a">초기화</button></div>');
 }
 function openHelp(){
   openSheet('사용법',
@@ -497,7 +536,7 @@ document.addEventListener('click',function(){if(!actx){try{actx=new (window.Audi
 var map=null,pinLayer=null,lineLayer=null,charMarker=null,trail=null,rafId=0;
 var routeCache={},routeFail={};
 var ov={items:[],segs:[],cur:0,anim:false,day:null,hidden:0};
-var PAL={h:'#3a2a1e',s:'#f2c9a0',k:'#1c2733',b:'#d9724a',p:'#1b4b7a',w:'#cfeaf7',y:'#f6d34d',r:'#e0a94e',g:'#2f9e78',W:'#ffffff',n:'#3f7cb0',x:'#8a97a5'};
+var PAL={h:'#3a2a1e',s:'#f2c9a0',k:'#1c2733',b:'#6e1a28',p:'#c9a96a',w:'#cfeaf7',y:'#f6d34d',r:'#e6d3a3',g:'#2f9e78',W:'#ffffff',n:'#c9a96a',x:'#8a97a5'};
 var SP={
  walk0:["...hhhh...","..hhhhhh..","..ssssss..","..skssks..","..ssssss..","...bbbb...","..bbbbbb..",".sbbbbbbs.",".sbbbbbbs.","..bbbbbb..","..pppppp..","..pp..pp..","..pp..pp..","..kk..kk.."],
  walk1:["...hhhh...","..hhhhhh..","..ssssss..","..skssks..","..ssssss..","...bbbb...","..bbbbbb..",".sbbbbbbs.",".sbbbbbbs.","..bbbbbb..","..pppppp..","...pppp...","...pppp...","...kkkk..."],
@@ -516,10 +555,49 @@ function setSprite(kind,frame,flip){
   box.style.transform=flip?'scaleX(-1)':'';
 }
 function hasL(){return typeof L!=='undefined'}
+var locWatch=null,meMarker=null,meCircle=null,locFirst=true;
+function stopLoc(){
+  if(locWatch!==null&&navigator.geolocation)navigator.geolocation.clearWatch(locWatch);
+  locWatch=null;locFirst=true;
+  if(meMarker&&map){map.removeLayer(meMarker);meMarker=null}
+  if(meCircle&&map){map.removeLayer(meCircle);meCircle=null}
+  var b=document.getElementById('locBtn');if(b){b.classList.remove('on');b.textContent='◎ 내 위치'}
+}
+function onLocOk(p){
+  var ll=[p.coords.latitude,p.coords.longitude],acc=p.coords.accuracy||0;
+  if(!meMarker){
+    meCircle=L.circle(ll,{radius:acc,color:'#1a73e8',weight:1,fillColor:'#1a73e8',fillOpacity:.12,interactive:false}).addTo(map);
+    meMarker=L.marker(ll,{icon:L.divIcon({className:'',html:'<div class="me-dot"></div>',iconSize:[16,16],iconAnchor:[8,8]}),interactive:false,zIndexOffset:1000}).addTo(map);
+  }else{meMarker.setLatLng(ll);meCircle.setLatLng(ll);meCircle.setRadius(acc)}
+  document.getElementById('locBtn').textContent='◎ 내 위치 끄기';
+  if(locFirst){locFirst=false;map.setView(ll,Math.max(map.getZoom(),15))}
+}
+function startLoc(high){
+  locWatch=navigator.geolocation.watchPosition(onLocOk,function(e){
+    var code=e&&e.code;
+    if(high&&(code===2||code===3)){
+      navigator.geolocation.clearWatch(locWatch);locWatch=null;
+      toast('정밀 위치 실패, 대략적인 위치로 다시 시도해요');startLoc(false);return;
+    }
+    stopLoc();
+    var msg=code===1?'위치 권한이 거부됐어요 (코드 1). 브라우저/앱 설정에서 위치를 허용해 주세요'
+      :code===2?'위치를 알 수 없어요 (코드 2). 폰의 위치(GPS) 켜짐 여부를 확인하세요'
+      :code===3?'위치 응답 시간이 초과됐어요 (코드 3)'
+      :'현재 위치를 가져오지 못했어요'+(e&&e.message?' ('+e.message+')':'');
+    toast(msg);
+  },{enableHighAccuracy:!!high,maximumAge:30000,timeout:high?12000:25000});
+}
+function toggleLoc(){
+  if(locWatch!==null){stopLoc();return}
+  if(!navigator.geolocation){toast('이 환경은 위치 기능을 지원하지 않아요');return}
+  if(!ensureMap())return;
+  var b=document.getElementById('locBtn');b.classList.add('on');b.textContent='◎ 찾는 중…';
+  startLoc(true);
+}
 function ensureMap(){
   if(map)return true;if(!hasL())return false;
   map=L.map('map',{zoomControl:true}).setView([35.68,139.76],11);
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Tiles © Esri'}).addTo(map);
   pinLayer=L.layerGroup().addTo(map);lineLayer=L.layerGroup().addTo(map);
   return true;
 }
@@ -544,8 +622,8 @@ function drawPins(){
 function drawLines(){
   lineLayer.clearLayers();
   ov.segs.forEach(function(s,i){
-    if(i<ov.cur)L.polyline(s,{color:'#1b4b7a',weight:5,opacity:.9}).addTo(lineLayer);
-    else L.polyline(s,{color:'#8a97a5',weight:4,opacity:.9,dashArray:'6 8'}).addTo(lineLayer);
+    if(i<ov.cur)L.polyline(s,{color:'#c9a96a',weight:3,opacity:.95}).addTo(lineLayer);
+    else L.polyline(s,{color:'#6f8579',weight:2,opacity:.9,dashArray:'6 8'}).addTo(lineLayer);
   });
 }
 function buildOverview(reset){
@@ -591,7 +669,7 @@ function animate(pts,mv,forward,done){
   var cum=[0],i;for(i=1;i<pts.length;i++)cum.push(cum[i-1]+map.distance(pts[i-1],pts[i]));
   var total=cum[cum.length-1]||1,dur=(1.6+Math.min(1,total/8000)*2.4)*1000,kind=kindOf(mv);
   ov.anim=true;updatePanel();
-  if(forward){trail=L.polyline([pts[0]],{color:'#1b4b7a',weight:5}).addTo(map)}
+  if(forward){trail=L.polyline([pts[0]],{color:'#c9a96a',weight:3}).addTo(map)}
   var t0=performance.now(),flip=pts[pts.length-1][1]<pts[0][1];
   function frame(now){
     var t=Math.min(1,(now-t0)/dur),e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2,d=e*total,k=1;
@@ -653,13 +731,16 @@ document.addEventListener('click',function(e){
     case 'saveitem':saveItem();break;
     case 'savetrip':saveTrip();break;
     case 'edittrip':openTripSheet(id);break;
-    case 'deltrip':if(armed('tr:'+id)){closeSheet();deleteTrip(id)}break;
-    case 'deltripl':if(armed('tr:'+id)){deleteTrip(id);openTripsSheet()}break;
+    case 'deltrip':if(armed('tr:'+id)){if(deleteTrip(id))openTripSheet();else closeSheet()}break;
+    case 'deltripl':if(armed('tr:'+id)){if(deleteTrip(id))openTripSheet();else openTripsSheet()}break;
     case 'switchtrip':store.activeId=id;save();ui.day=null;closeSheet();renderAll();toast(cur().title);break;
     case 'prev':step(-1);break;
     case 'next':step(1);break;
     case 'now':goNow();break;
     case 'settitle':var v=$('#sTitle').value.trim();if(!v){toast('제목을 입력해주세요');break}t.title=v;save();renderBar();renderHero();toast('제목을 바꿨어요');break;
+    case 'addstop':var L=$('#stopList'),rs=L.querySelectorAll('.stoprow'),lf=rs.length?rs[rs.length-1].querySelector('.sTo').value:$('#tStart').value;L.insertAdjacentHTML('beforeend',stopRow('',lf,lf));L.lastChild.querySelector('.sCity').focus();syncTripDates();break;
+    case 'delstop':el.closest('.stoprow').remove();syncTripDates();break;
+    case 'aerokey':var ak=prompt('RapidAPI의 AeroDataBox 키(X-RapidAPI-Key)를 붙여넣어 주세요.\n비우고 확인하면 삭제돼요.\n(이 기기에만 저장되고 백업·공유되지 않아요)',getAeroKey());if(ak!==null){try{if(ak.trim())localStorage.setItem('jplanner.aerokey',ak.trim());else localStorage.removeItem('jplanner.aerokey')}catch(x){}openSettings();toast(ak.trim()?'키를 저장했어요':'키를 삭제했어요')}break;
     case 'install':
       if(deferredInstall){deferredInstall.prompt();deferredInstall=null}
       else toast('브라우저 메뉴의 "홈 화면에 추가" 또는 "앱 설치"를 눌러주세요');break;
