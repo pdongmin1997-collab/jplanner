@@ -605,7 +605,8 @@ function toggleLoc(){
 function ensureMap(){
   if(map)return true;if(!hasL())return false;
   map=L.map('map',{zoomControl:true}).setView([35.68,139.76],11);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:20,maxNativeZoom:19,attribution:'© OpenStreetMap © CARTO'}).addTo(map);
+  var tl=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map),tfb=false;
+  tl.on('tileerror',function(){if(tfb)return;tfb=true;map.removeLayer(tl);L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,maxNativeZoom:13,attribution:'Tiles © Esri'}).addTo(map)});
   pinLayer=L.layerGroup().addTo(map);lineLayer=L.layerGroup().addTo(map);
   return true;
 }
