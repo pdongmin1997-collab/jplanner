@@ -108,7 +108,7 @@ h4.sec{margin:26px 0 10px;font-size:10px;letter-spacing:.4em;text-transform:uppe
 .pinb{width:26px;height:26px;border-radius:50%;background:var(--wine);color:var(--text);font-family:var(--serif);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--gold);box-shadow:0 2px 8px rgba(0,0,0,.5)}
 .pinb.v{background:var(--gold);color:#1a1208}
 .pinl{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);background:#0b1712;color:var(--text);border:1px solid var(--line);padding:2px 8px;font-size:11px;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis}
-.charin{pointer-events:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}.charin svg{display:block}
+.charin{position:relative;width:44px;height:44px;pointer-events:none;filter:drop-shadow(0 3px 8px rgba(0,0,0,.6))}.charin svg{display:block;position:relative}.charin::before{content:'';position:absolute;inset:0;border-radius:50%;border:1px solid var(--gold);animation:cpulse 2.4s ease-out infinite}@keyframes cpulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.7);opacity:0}}@media(prefers-reduced-motion:reduce){.charin::before{animation:none;opacity:0}}
 
 #sheetWrap{position:fixed;inset:0;z-index:100}
 .backdrop{position:absolute;inset:0;background:rgba(4,10,7,.74);opacity:0;transition:opacity .25s}
@@ -537,23 +537,27 @@ document.addEventListener('click',function(){if(!actx){try{actx=new (window.Audi
 var map=null,pinLayer=null,lineLayer=null,charMarker=null,trail=null,rafId=0;
 var routeCache={},routeFail={};
 var ov={items:[],segs:[],cur:0,anim:false,day:null,hidden:0};
-var PAL={h:'#3a2a1e',s:'#f2c9a0',k:'#1c2733',b:'#6e1a28',p:'#c9a96a',w:'#cfeaf7',y:'#f6d34d',r:'#e6d3a3',g:'#2f9e78',W:'#ffffff',n:'#c9a96a',x:'#8a97a5'};
-var SP={
- walk0:["...hhhh...","..hhhhhh..","..ssssss..","..skssks..","..ssssss..","...bbbb...","..bbbbbb..",".sbbbbbbs.",".sbbbbbbs.","..bbbbbb..","..pppppp..","..pp..pp..","..pp..pp..","..kk..kk.."],
- walk1:["...hhhh...","..hhhhhh..","..ssssss..","..skssks..","..ssssss..","...bbbb...","..bbbbbb..",".sbbbbbbs.",".sbbbbbbs.","..bbbbbb..","..pppppp..","...pppp...","...pppp...","...kkkk..."],
- car:["......yy......","....rrrrrr....","...rwwrrwwr...","..rrwwrrwwrr..",".rrrrrrrrrrrr.","rrrrrrrrrrrrrr",".rkkr....rkkr.","..kk......kk.."],
- train:[".nnnnnnnnnnnn.","nnnnnnnnnnnnnn","nwwnwwnwwnwwnn","nwwnwwnwwnwwnn","nnnnnnnnnnnnnn","nnyynnnnnnyynn",".nnnnnnnnnnnn.","..kk......kk.."],
- tram:[".......k......","....kkkkkk....",".gggggggggggg.","gggggggggggggg","gwwgwwgwwgwwgg","gwwgwwgwwgwwgg","gggggggggggggg","ggyyggggggyygg",".kk........kk."],
- plane:["......nn......",".....nWWn.....","nnnnnnWWnnnnnn",".nWWWWWWWWWWn.","..nnnnWWnnnn..","......WW......",".....nWWn.....","......nn......"]
+var ICO={
+ walk:['<path d="M12 3.2l1.5 7.3 7.3 1.5-7.3 1.5L12 20.8l-1.5-7.3L3.2 12l7.3-1.5z" fill="#c9a96a" stroke="none"/>','<path d="M12 5.6l1.2 5.2 5.2 1.2-5.2 1.2L12 18.4l-1.2-5.2L5.6 12l5.2-1.2z" fill="#c9a96a" stroke="none"/>'],
+ car:['<path d="M4.5 14.5V12l1.8-4h11.4l1.8 4v2.5z"/><path d="M5 12h14"/><circle cx="8" cy="16.6" r="1.4"/><circle cx="16" cy="16.6" r="1.4"/>'],
+ train:['<rect x="6.5" y="4" width="11" height="12" rx="3"/><path d="M6.5 10.5h11"/><circle cx="9.5" cy="13.2" r=".7" fill="#c9a96a"/><circle cx="14.5" cy="13.2" r=".7" fill="#c9a96a"/><path d="M8.5 20l2-4M15.5 20l-2-4"/>'],
+ tram:['<path d="M9 2.8h6M12 2.8V5"/><rect x="6.5" y="5" width="11" height="11" rx="2.5"/><path d="M6.5 10h11"/><circle cx="9.5" cy="13" r=".7" fill="#c9a96a"/><circle cx="14.5" cy="13" r=".7" fill="#c9a96a"/><path d="M8.5 20l2-4M15.5 20l-2-4"/>'],
+ plane:['<path d="M12 3c.8 0 1.3.8 1.3 1.8V9l7.2 4.3v1.8l-7.2-2.1v4.2l2 1.5V20L12 19.1 8.7 20v-1.3l2-1.5v-4.2L3.5 15.1v-1.8L10.7 9V4.8C10.7 3.8 11.2 3 12 3z" fill="rgba(201,169,106,.25)"/>']
 };
-function sprite(rows,px){var H=rows.length,W=rows[0].length,r='';rows.forEach(function(row,y){for(var x=0;x<row.length;x++){var c=row[x];if(c!=='.')r+='<rect x="'+x+'" y="'+y+'" width="1" height="1" fill="'+PAL[c]+'"/>'}});return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+W+' '+H+'" width="'+(W*px)+'" height="'+(H*px)+'" shape-rendering="crispEdges">'+r+'</svg>'}
+function sprite(kind,frame){
+  var ic=ICO[kind]||ICO.walk,body=ic[frame%ic.length];
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" width="44" height="44">'
+   +'<circle cx="22" cy="22" r="20" fill="#0e1d17" stroke="#c9a96a" stroke-width="1.5"/>'
+   +'<circle cx="22" cy="22" r="16.5" fill="none" stroke="#c9a96a" stroke-opacity=".35" stroke-width=".8"/>'
+   +'<g transform="translate(10 10)" fill="none" stroke="#c9a96a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">'+body+'</g></svg>';
+}
 function kindOf(mv){return mv==='택시'||mv==='버스'?'car':mv==='지하철'||mv==='기차'?'train':mv==='트램'?'tram':mv==='항공'?'plane':'walk'}
 var lastSp='';
 function setSprite(kind,frame,flip){
   if(!charMarker)return;var el=charMarker.getElement();if(!el)return;var box=el.firstChild;if(!box)return;
   var key=kind+frame+flip;if(key===lastSp)return;lastSp=key;
-  box.innerHTML=sprite(kind==='walk'?SP['walk'+frame]:SP[kind],3);
-  box.style.transform=flip?'scaleX(-1)':'';
+  box.innerHTML=sprite(kind,frame);
+  box.style.transform=(flip&&kind!=='walk')?'scaleX(-1)':'';
 }
 function hasL(){return typeof L!=='undefined'}
 var locWatch=null,meMarker=null,meCircle=null,locFirst=true;
@@ -655,7 +659,7 @@ function buildOverview(reset){
   if(charMarker){map.removeLayer(charMarker);charMarker=null}
   if(items.length){
     var c=items[ov.cur];
-    charMarker=L.marker([c.lat,c.lng],{icon:L.divIcon({className:'char',html:'<div class="charin"></div>',iconSize:[42,44],iconAnchor:[21,42]}),interactive:false,zIndexOffset:5000}).addTo(map);
+    charMarker=L.marker([c.lat,c.lng],{icon:L.divIcon({className:'char',html:'<div class="charin"></div>',iconSize:[44,44],iconAnchor:[22,22]}),interactive:false,zIndexOffset:5000}).addTo(map);
     lastSp='';setSprite('walk',0,false);
     if(reset||dayChanged){
       if(items.length===1)map.setView([c.lat,c.lng],15,{animate:false});
